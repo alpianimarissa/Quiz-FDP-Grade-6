@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika Interaktif Kelas 6 - 30 Soal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0fdf4;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', cursive;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 4px;
+        }
+        .fraction-top {
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 2px;
+        }
+        .fraction-bottom {
+            padding-top: 2px;
+        }
+        .nav-grid-btn {
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-emerald-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500 text-white p-2.5 rounded-2xl shadow-md">
+                    <i class="fa-solid fa-file-pen text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-emerald-800 leading-none">Kuis Tantangan Matematika</h1>
+                    <p class="text-xs text-emerald-600 font-semibold mt-1">Kelas 6 SD • 30 Soal Konversi, Membandingkan & Mengurutkan</p>
+                </div>
+            </div>
+
+            <!-- Score & Progress Indicator -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200 text-right">
+                    <span class="text-[10px] text-emerald-600 font-bold block uppercase tracking-wider">Terjawab</span>
+                    <span id="stat-answered" class="text-base font-black text-emerald-700">0 / 30</span>
+                </div>
+                <div class="bg-amber-50 px-3.5 py-1.5 rounded-xl border border-amber-200 text-right">
+                    <span class="text-[10px] text-amber-600 font-bold block uppercase tracking-wider">Skor</span>
+                    <span id="stat-score" class="text-base font-black text-amber-600">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Sidebar / Grid Navigasi Soal -->
+        <aside class="lg:col-span-1 bg-white p-5 rounded-3xl border border-emerald-100 card-shadow h-fit space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-list-ol text-emerald-600"></i> Navigasi Soal
+                </h3>
+                <button onclick="resetQuizData()" class="text-[11px] font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg hover:bg-rose-100 transition-all" title="Reset semua jawaban">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Reset
+                </button>
+            </div>
+
+            <!-- Peta No Soal (Grid 1-30) -->
+            <div id="quiz-grid" class="grid grid-cols-5 gap-2">
+                <!-- JS akan me-render 30 tombol di sini -->
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 text-[11px] space-y-1.5 text-slate-500 font-medium">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-md bg-emerald-500 border border-emerald-600 inline-block"></span> Benar
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-md bg-rose-500 border border-rose-600 inline-block"></span> Salah
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-md bg-amber-400 border border-amber-500 inline-block"></span> Sedang Dibuka
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-md bg-slate-100 border border-slate-300 inline-block"></span> Belum Diisi
+                </div>
+            </div>
+        </aside>
+
+        <!-- Area Soal Utama -->
+        <section class="lg:col-span-3 space-y-4">
+            <div class="bg-white p-6 md:p-8 rounded-3xl border border-emerald-100 card-shadow space-y-6">
+                
+                <!-- Soal Bar Header -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <span id="question-tag" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">
+                        Kategori Soal
+                    </span>
+                    <span id="question-number-title" class="text-sm font-bold text-slate-500">
+                        Soal 1 dari 30
+                    </span>
+                </div>
+
+                <!-- Teks Soal -->
+                <div class="min-h-[90px] flex items-center">
+                    <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 leading-relaxed">
+                        Memuat pertanyaan...
+                    </h2>
+                </div>
+
+                <!-- Pilihan Jawaban -->
+                <div id="options-container" class="space-y-3 pt-2">
+                    <!-- JS akan merender 4 opsi jawaban -->
+                </div>
+
+                <!-- Penjelasan / Feedback Otomatis -->
+                <div id="feedback-box" class="hidden p-4 rounded-2xl border text-sm space-y-1.5 transition-all">
+                    <!-- Dynamic Feedback -->
+                </div>
+
+                <!-- Navigasi Bawah (Sebelumnya / Selanjutnya) -->
+                <div class="flex justify-between items-center pt-6 border-t border-slate-100">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Sebelumnya
+                    </button>
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition-all">
+                        Selanjutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Penyelesaian -->
+    <div id="completion-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-xl">
+            <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">Kuis Selesai!</h3>
+            <p class="text-sm text-slate-600">Selamat! Anda telah menyelesaikan seluruh pertanyaan kuis matematika.</p>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-1">
+                <span class="text-xs text-slate-400 font-bold uppercase">Skor Akhir Anda</span>
+                <div id="modal-score" class="text-4xl font-black text-emerald-600">0</div>
+            </div>
+            <div class="pt-2 flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-600 hover:bg-slate-50 transition-all">Tutup</button>
+                <button onclick="resetQuizData()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition-all">Ulangi Kuis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-emerald-100 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 Matematika Ceria SD • Kuis Interaktif Pembelajaran Pecahan, Desimal, dan Persen</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- BANK SOAL UNIK DENGAN KUNCI JAWABAN YANG DIAK & SEIMBANG (A:7, B:8, C:8, D:7) ---
+        const quizDatabase = [
+            // --- KELOMPOK 1: KONVERSI PECAHAN -> DESIMAL & PERSEN (Soal 1 - 7) ---
+            {
+                id: 1,
+                tag: "Konversi Pecahan",
+                q: "Ubahlah pecahan <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "0,35 dan 35%",
+                    "0,65 dan 65%",
+                    "0,6 dan 60%",
+                    "0,75 dan 75%"
+                ],
+                correct: 2, // C
+                explanation: "3/5 = (3 × 2) / (5 × 2) = 6/10 = 0,6. Dalam persen: 0,6 × 100% = 60%."
+            },
+            {
+                id: 2,
+                tag: "Konversi Pecahan",
+                q: "Ubahlah pecahan <span class='fraction'><span class='fraction-top'>7</span><span class='fraction-bottom'>8</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "0,875 dan 87,5%",
+                    "0,78 dan 78%",
+                    "0,85 dan 85%",
+                    "0,825 dan 82,5%"
+                ],
+                correct: 0, // A
+                explanation: "7/8 = (7 × 125) / (8 × 125) = 875/1000 = 0,875. Dalam persen: 0,875 × 100% = 87,5%."
+            },
+            {
+                id: 3,
+                tag: "Konversi Pecahan Campuran",
+                q: "Ubahlah pecahan campuran 1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>2</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "1,2 dan 120%",
+                    "1,25 dan 125%",
+                    "1,15 dan 115%",
+                    "1,5 dan 150%"
+                ],
+                correct: 3, // D
+                explanation: "1 1/2 = 3/2 = 1,5. Dalam persen: 1,5 × 100% = 150%."
+            },
+            {
+                id: 4,
+                tag: "Konversi Pecahan",
+                q: "Ubahlah pecahan <span class='fraction'><span class='fraction-top'>9</span><span class='fraction-bottom'>20</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "0,9 dan 90%",
+                    "0,45 dan 45%",
+                    "0,4 dan 40%",
+                    "0,92 dan 92%"
+                ],
+                correct: 1, // B
+                explanation: "9/20 = (9 × 5) / (20 × 5) = 45/100 = 0,45. Dalam persen: 0,45 × 100% = 45%."
+            },
+            {
+                id: 5,
+                tag: "Konversi Pecahan Campuran",
+                q: "Ubahlah pecahan campuran 2 <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>4</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "2,34 dan 234%",
+                    "2,5 dan 250%",
+                    "2,75 dan 275%",
+                    "2,8 dan 280%"
+                ],
+                correct: 2, // C
+                explanation: "2 3/4 = 11/4 = 2,75. Dalam persen: 2,75 × 100% = 275%."
+            },
+            {
+                id: 6,
+                tag: "Konversi Pecahan",
+                q: "Ubahlah pecahan <span class='fraction'><span class='fraction-top'>11</span><span class='fraction-bottom'>25</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "0,11 dan 11%",
+                    "0,25 dan 25%",
+                    "0,55 dan 55%",
+                    "0,44 dan 44%"
+                ],
+                correct: 3, // D
+                explanation: "11/25 = (11 × 4) / (25 × 4) = 44/100 = 0,44. Dalam persen: 0,44 × 100% = 44%."
+            },
+            {
+                id: 7,
+                tag: "Konversi Pecahan",
+                q: "Ubahlah pecahan <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>8</span></span> menjadi bentuk desimal dan persen!",
+                options: [
+                    "0,18 dan 18%",
+                    "0,125 dan 12,5%",
+                    "0,15 dan 15%",
+                    "0,25 dan 25%"
+                ],
+                correct: 1, // B
+                explanation: "1/8 = 125/1000 = 0,125. Dalam persen: 0,125 × 100% = 12,5%."
+            },
+
+            // --- KELOMPOK 2: KONVERSI PERSEN -> PECAHAN & DESIMAL (Soal 8 - 14) ---
+            {
+                id: 8,
+                tag: "Konversi Persen",
+                q: "Ubahlah bentuk 32% menjadi pecahan biasa paling sederhana dan desimal!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>16</span><span class='fraction-bottom'>50</span></span> dan 0,32",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>25</span></span> dan 0,3",
+                    "<span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>25</span></span> dan 0,23",
+                    "<span class='fraction'><span class='fraction-top'>8</span><span class='fraction-bottom'>25</span></span> dan 0,32"
+                ],
+                correct: 3, // D
+                explanation: "32% = 32/100 = (32÷4)/(100÷4) = 8/25. Dalam desimal: 32/100 = 0,32."
+            },
+            {
+                id: 9,
+                tag: "Konversi Persen",
+                q: "Ubahlah bentuk 75% menjadi pecahan biasa paling sederhana dan desimal!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>7</span><span class='fraction-bottom'>5</span></span> dan 0,75",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>4</span></span> dan 0,75",
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> dan 0,7",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> dan 0,75"
+                ],
+                correct: 1, // B
+                explanation: "75% = 75/100 = 3/4. Dalam desimal: 75/100 = 0,75."
+            },
+            {
+                id: 10,
+                tag: "Konversi Persen Lebih dari 100%",
+                q: "Ubahlah bentuk 140% menjadi pecahan sederhana (campuran) dan desimal!",
+                options: [
+                    "1 <span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>5</span></span> dan 1,4",
+                    "1 <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>10</span></span> dan 14,0",
+                    "1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> dan 1,4",
+                    "1 <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> dan 1,04"
+                ],
+                correct: 0, // A
+                explanation: "140% = 140/100 = 7/5 = 1 2/5. Dalam desimal: 140/100 = 1,4."
+            },
+            {
+                id: 11,
+                tag: "Konversi Persen",
+                q: "Ubahlah bentuk 15% menjadi pecahan biasa paling sederhana dan desimal!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>5</span></span> dan 0,15",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>10</span></span> dan 0,5",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>20</span></span> dan 0,15",
+                    "<span class='fraction'><span class='fraction-top'>15</span><span class='fraction-bottom'>10</span></span> dan 0,015"
+                ],
+                correct: 2, // C
+                explanation: "15% = 15/100 = (15÷5)/(100÷5) = 3/20. Dalam desimal: 15/100 = 0,15."
+            },
+            {
+                id: 12,
+                tag: "Konversi Persen",
+                q: "Ubahlah bentuk 60% menjadi pecahan biasa paling sederhana dan desimal!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>6</span><span class='fraction-bottom'>10</span></span> dan 0,6",
+                    "<span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>3</span></span> dan 0,66",
+                    "<span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span> dan 0,06",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> dan 0,6"
+                ],
+                correct: 3, // D
+                explanation: "60% = 60/100 = 3/5. Dalam desimal: 60/100 = 0,6."
+            },
+            {
+                id: 13,
+                tag: "Konversi Persen",
+                q: "Ubahlah bentuk 5% menjadi pecahan biasa paling sederhana dan desimal!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>2</span></span> dan 0,5",
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>20</span></span> dan 0,05",
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>5</span></span> dan 0,05",
+                    "<span class='fraction'><span class='fraction-top'>5</span><span class='fraction-bottom'>20</span></span> dan 0,5"
+                ],
+                correct: 1, // B
+                explanation: "5% = 5/100 = 1/20. Dalam desimal: 5/100 = 0,05."
+            },
+            {
+                id: 14,
+                tag: "Konversi Persen Lebih dari 100%",
+                q: "Ubahlah bentuk 225% menjadi pecahan campuran paling sederhana dan desimal!",
+                options: [
+                    "2 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> dan 2,25",
+                    "2 <span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>5</span></span> dan 2,25",
+                    "2 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>2</span></span> dan 2,5",
+                    "22 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>2</span></span> dan 22,5"
+                ],
+                correct: 0, // A
+                explanation: "225% = 225/100 = 9/4 = 2 1/4. Dalam desimal: 225/100 = 2,25."
+            },
+
+            // --- KELOMPOK 3: KONVERSI DESIMAL -> PECAHAN & PERSEN (Soal 15 - 20) ---
+            {
+                id: 15,
+                tag: "Konversi Desimal",
+                q: "Ubahlah bilangan desimal 0,64 menjadi pecahan biasa paling sederhana dan persen!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>64</span><span class='fraction-bottom'>10</span></span> dan 64%",
+                    "<span class='fraction'><span class='fraction-top'>8</span><span class='fraction-bottom'>25</span></span> dan 6,4%",
+                    "<span class='fraction'><span class='fraction-top'>16</span><span class='fraction-bottom'>25</span></span> dan 64%",
+                    "<span class='fraction'><span class='fraction-top'>32</span><span class='fraction-bottom'>50</span></span> dan 640%"
+                ],
+                correct: 2, // C
+                explanation: "0,64 = 64/100 = (64÷4)/(100÷4) = 16/25. Dalam persen: 0,64 × 100% = 64%."
+            },
+            {
+                id: 16,
+                tag: "Konversi Desimal",
+                q: "Ubahlah bilangan desimal 0,08 menjadi pecahan biasa paling sederhana dan persen!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>25</span></span> dan 80%",
+                    "<span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>25</span></span> dan 8%",
+                    "<span class='fraction'><span class='fraction-top'>8</span><span class='fraction-bottom'>10</span></span> dan 8%",
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>8</span></span> dan 0,8%"
+                ],
+                correct: 1, // B
+                explanation: "0,08 = 8/100 = (8÷4)/(100÷4) = 2/25. Dalam persen: 0,08 × 100% = 8%."
+            },
+            {
+                id: 17,
+                tag: "Konversi Desimal Lebih dari 1",
+                q: "Ubahlah bilangan desimal 1,8 menjadi pecahan campuran paling sederhana dan persen!",
+                options: [
+                    "1 <span class='fraction'><span class='fraction-top'>8</span><span class='fraction-bottom'>100</span></span> dan 18%",
+                    "1 <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> dan 180%",
+                    "18 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>10</span></span> dan 1800%",
+                    "1 <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span> dan 180%"
+                ],
+                correct: 3, // D
+                explanation: "1,8 = 18/10 = 9/5 = 1 4/5. Dalam persen: 1,8 × 100% = 180%."
+            },
+            {
+                id: 18,
+                tag: "Konversi Desimal",
+                q: "Ubahlah bilangan desimal 0,375 menjadi pecahan biasa paling sederhana dan persen!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>375</span><span class='fraction-bottom'>100</span></span> dan 37,5%",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>4</span></span> dan 375%",
+                    "<span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>8</span></span> dan 37,5%",
+                    "<span class='fraction'><span class='fraction-top'>7</span><span class='fraction-bottom'>20</span></span> dan 3,75%"
+                ],
+                correct: 2, // C
+                explanation: "0,375 = 375/1000 = (375÷125)/(1000÷125) = 3/8. Dalam persen: 0,375 × 100% = 37,5%."
+            },
+            {
+                id: 19,
+                tag: "Konversi Desimal",
+                q: "Ubahlah bilangan desimal 0,92 menjadi pecahan biasa paling sederhana dan persen!",
+                options: [
+                    "<span class='fraction'><span class='fraction-top'>23</span><span class='fraction-bottom'>25</span></span> dan 92%",
+                    "<span class='fraction'><span class='fraction-top'>46</span><span class='fraction-bottom'>50</span></span> dan 9,2%",
+                    "<span class='fraction'><span class='fraction-top'>9</span><span class='fraction-bottom'>20</span></span> dan 92%",
+                    "<span class='fraction'><span class='fraction-top'>92</span><span class='fraction-bottom'>10</span></span> dan 920%"
+                ],
+                correct: 0, // A
+                explanation: "0,92 = 92/100 = (92÷4)/(100÷4) = 23/25. Dalam persen: 0,92 × 100% = 92%."
+            },
+            {
+                id: 20,
+                tag: "Konversi Desimal Lebih dari 1",
+                q: "Ubahlah bilangan desimal 3,25 menjadi pecahan campuran paling sederhana dan persen!",
+                options: [
+                    "3 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>25</span></span> dan 325%",
+                    "3 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> dan 325%",
+                    "3 <span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>5</span></span> dan 32,5%",
+                    "32 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> dan 3250%"
+                ],
+                correct: 1, // B
+                explanation: "3,25 = 3 + 25/100 = 3 1/4. Dalam persen: 3,25 × 100% = 325%."
+            },
+
+            // --- KELOMPOK 4: MEMBANDINGKAN (Soal 21 - 25) ---
+            {
+                id: 21,
+                tag: "Membandingkan Nilai",
+                q: "Tanda perbandingan yang tepat untuk menyatukan dua nilai berikut adalah: <br><strong class='text-emerald-800 text-lg bg-slate-100 px-3 py-1 rounded inline-block mt-1'>0,85 ..... <span class='fraction'><span class='fraction-top'>7</span><span class='fraction-bottom'>8</span></span></strong>",
+                options: [
+                    ">",
+                    "<",
+                    "=",
+                    "≥"
+                ],
+                correct: 1, // B
+                explanation: "7/8 = 0,875. Bandingkan 0,85 dengan 0,875. Karena 0,850 < 0,875, tanda yang benar adalah '<'."
+            },
+            {
+                id: 22,
+                tag: "Membandingkan Nilai",
+                q: "Isilah titik-titik berikut dengan tanda yang tepat: <br><strong class='text-emerald-800 text-lg bg-slate-100 px-3 py-1 rounded inline-block mt-1'>68% ..... <span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>3</span></span></strong>",
+                options: [
+                    "<",
+                    "=",
+                    ">",
+                    "≤"
+                ],
+                correct: 2, // C
+                explanation: "68% = 0,68. Pecahan 2/3 ≈ 0,666... Karena 0,68 > 0,666, maka tanda yang tepat adalah '>'."
+            },
+            {
+                id: 23,
+                tag: "Membandingkan Nilai",
+                q: "Isilah titik-titik berikut dengan tanda yang tepat: <br><strong class='text-emerald-800 text-lg bg-slate-100 px-3 py-1 rounded inline-block mt-1'>1 <span class='fraction'><span class='fraction-top'>2</span><span class='fraction-bottom'>5</span></span> ..... 140%</strong>",
+                options: [
+                    ">",
+                    "<",
+                    "≠",
+                    "="
+                ],
+                correct: 3, // D
+                explanation: "1 2/5 = 7/5 = 1,4 = 140%. Karena nilainya identik/sama, tanda yang tepat adalah '='."
+            },
+            {
+                id: 24,
+                tag: "Membandingkan Soal Cerita",
+                q: "Ayah membeli tali sepanjang 1,6 meter. Paman membeli tali 165% meter. Tali siapakah yang lebih PANJANG?",
+                options: [
+                    "Tali Paman",
+                    "Tali Ayah",
+                    "Sama panjang",
+                    "Tidak dapat ditentukan"
+                ],
+                correct: 0, // A
+                explanation: "Ayah = 1,6 m = 160% m. Paman = 165% m. Karena 165% > 160%, tali Paman lebih panjang."
+            },
+            {
+                id: 25,
+                tag: "Membandingkan Soal Cerita",
+                q: "Siti menghabiskan <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span> jam untuk belajar, sedangkan Dayu menghabiskan 0,78 jam. Siapakah yang belajar lebih LAMA?",
+                options: [
+                    "Dayu",
+                    "Siti",
+                    "Waktu belajar keduanya sama",
+                    "Dayu lebih lama 1 jam"
+                ],
+                correct: 1, // B
+                explanation: "Siti = 4/5 jam = 0,80 jam. Dayu = 0,78 jam. Karena 0,80 > 0,78, Siti belajar lebih lama."
+            },
+
+            // --- KELOMPOK 5: MENGURUTKAN BILANGAN (Soal 26 - 30) ---
+            {
+                id: 26,
+                tag: "Mengurutkan Terkecil",
+                q: "Urutkan bilangan berikut dari yang <strong>TERKECIL</strong>: <br><span class='font-bold text-slate-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 inline-block mt-2'>0,35 ; &nbsp; 40% ; &nbsp; <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> ; &nbsp; 0,3</span>",
+                options: [
+                    "0,3 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> &nbsp;;&nbsp; 0,35 &nbsp;;&nbsp; 40%",
+                    "0,35 &nbsp;;&nbsp; 0,3 &nbsp;;&nbsp; 40% &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span>",
+                    "<span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> &nbsp;;&nbsp; 0,3 &nbsp;;&nbsp; 0,35 &nbsp;;&nbsp; 40%",
+                    "40% &nbsp;;&nbsp; 0,35 &nbsp;;&nbsp; 0,3 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span>"
+                ],
+                correct: 2, // C
+                explanation: "Desimal: 0,35 ; 40%=0,40 ; 1/4=0,25 ; 0,3=0,30. Urutan dari terkecil: 0,25 (1/4) → 0,30 (0,3) → 0,35 → 0,40 (40%)."
+            },
+            {
+                id: 27,
+                tag: "Mengurutkan Terbesar",
+                q: "Urutkan bilangan berikut dari yang <strong>TERBESAR</strong>: <br><span class='font-bold text-slate-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 inline-block mt-2'>0,9 ; &nbsp; 82% ; &nbsp; <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span> ; &nbsp; 0,85</span>",
+                options: [
+                    "82% &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span> &nbsp;;&nbsp; 0,85 &nbsp;;&nbsp; 0,9",
+                    "0,9 &nbsp;;&nbsp; 0,85 &nbsp;;&nbsp; 82% &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span>",
+                    "0,9 &nbsp;;&nbsp; 82% &nbsp;;&nbsp; 0,85 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span>",
+                    "0,85 &nbsp;;&nbsp; 0,9 &nbsp;;&nbsp; 82% &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>4</span><span class='fraction-bottom'>5</span></span>"
+                ],
+                correct: 1, // B
+                explanation: "Desimal: 0,9=0,90 ; 82%=0,82 ; 4/5=0,80 ; 0,85. Urutan terbesar: 0,90 (0,9) → 0,85 → 0,82 (82%) → 0,80 (4/5)."
+            },
+            {
+                id: 28,
+                tag: "Mengurutkan Terkecil",
+                q: "Urutkan bilangan berikut dari yang <strong>TERKECIL</strong>: <br><span class='font-bold text-slate-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 inline-block mt-2'>1,2 ; &nbsp; 115% ; &nbsp; 1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> ; &nbsp; 1,08</span>",
+                options: [
+                    "1,08 &nbsp;;&nbsp; 115% &nbsp;;&nbsp; 1,2 &nbsp;;&nbsp; 1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span>",
+                    "115% &nbsp;;&nbsp; 1,08 &nbsp;;&nbsp; 1,2 &nbsp;;&nbsp; 1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span>",
+                    "1,08 &nbsp;;&nbsp; 1,2 &nbsp;;&nbsp; 115% &nbsp;;&nbsp; 1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span>",
+                    "1 <span class='fraction'><span class='fraction-top'>1</span><span class='fraction-bottom'>4</span></span> &nbsp;;&nbsp; 1,2 &nbsp;;&nbsp; 115% &nbsp;;&nbsp; 1,08"
+                ],
+                correct: 0, // A
+                explanation: "Ubah ke desimal: 1,2=1,20 ; 115%=1,15 ; 1 1/4=1,25 ; 1,08. Urutan terkecil: 1,08 → 1,15 (115%) → 1,20 (1,2) → 1,25 (1 1/4)."
+            },
+            {
+                id: 29,
+                tag: "Mengurutkan Soal Cerita",
+                q: "Budi memiliki minyak 0,6 liter, Edo <span class='fraction'><span class='fraction-top'>5</span><span class='fraction-bottom'>8</span></span> liter, dan Lani 65% liter. Urutkan nama anak dari pemilik minyak paling <strong>BANYAK</strong>!",
+                options: [
+                    "Edo &rarr; Lani &rarr; Budi",
+                    "Budi &rarr; Lani &rarr; Edo",
+                    "Lani &rarr; Budi &rarr; Edo",
+                    "Lani &rarr; Edo &rarr; Budi"
+                ],
+                correct: 3, // D
+                explanation: "Desimal: Budi = 0,600 L ; Edo = 5/8 = 0,625 L ; Lani = 65% = 0,650 L. Urutan terbanyak: Lani (0,650) → Edo (0,625) → Budi (0,600)."
+            },
+            {
+                id: 30,
+                tag: "Mengurutkan Terbesar",
+                q: "Urutkan bilangan berikut dari yang <strong>TERBESAR</strong>: <br><span class='font-bold text-slate-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 inline-block mt-2'><span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> ; &nbsp; 0,55 ; &nbsp; 70% ; &nbsp; 0,68</span>",
+                options: [
+                    "0,68 &nbsp;;&nbsp; 70% &nbsp;;&nbsp; 0,55 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span>",
+                    "70% &nbsp;;&nbsp; 0,68 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> &nbsp;;&nbsp; 0,55",
+                    "70% &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> &nbsp;;&nbsp; 0,68 &nbsp;;&nbsp; 0,55",
+                    "0,55 &nbsp;;&nbsp; <span class='fraction'><span class='fraction-top'>3</span><span class='fraction-bottom'>5</span></span> &nbsp;;&nbsp; 0,68 &nbsp;;&nbsp; 70%"
+                ],
+                correct: 1, // B
+                explanation: "Desimal: 3/5=0,60 ; 0,55 ; 70%=0,70 ; 0,68. Urutan terbesar: 0,70 (70%) → 0,68 → 0,60 (3/5) → 0,55."
+            }
+        ];
+
+        // --- STATE MANAGEMENT & LOCALSTORAGE ---
+        let currentIdx = 0;
+        let userAnswers = {}; // Format: { questionIdx: selectedOptionIdx }
+
+        const STORAGE_KEY = "kuis_matematika_kls6_answers_v2";
+
+        function loadSavedAnswers() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    userAnswers = JSON.parse(saved);
+                } catch (e) {
+                    userAnswers = {};
+                }
+            }
+        }
+
+        function saveAnswers() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers));
+            updateStats();
+            renderSidebarGrid();
+        }
+
+        function resetQuizData() {
+            localStorage.removeItem(STORAGE_KEY);
+            userAnswers = {};
+            currentIdx = 0;
+            closeModal();
+            initQuiz();
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderSidebarGrid() {
+            const gridContainer = document.getElementById('quiz-grid');
+            gridContainer.innerHTML = '';
+
+            quizDatabase.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "nav-grid-btn text-xs font-bold py-2 rounded-xl border flex items-center justify-center transition-all ";
+                
+                const answered = userAnswers.hasOwnProperty(idx);
+                const isCurrent = idx === currentIdx;
+
+                if (isCurrent) {
+                    btn.classList.add('ring-2', 'ring-amber-400', 'ring-offset-1', 'font-black');
+                }
+
+                if (answered) {
+                    const isCorrect = userAnswers[idx] === q.correct;
+                    if (isCorrect) {
+                        btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                    } else {
+                        btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                    }
+                } else {
+                    if (isCurrent) {
+                        btn.classList.add('bg-amber-100', 'text-amber-900', 'border-amber-300');
+                    } else {
+                        btn.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200', 'hover:bg-slate-100');
+                    }
+                }
+
+                btn.innerText = idx + 1;
+                btn.onclick = () => jumpToQuestion(idx);
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        function renderQuestion() {
+            const q = quizDatabase[currentIdx];
+            
+            document.getElementById('question-tag').innerText = q.tag;
+            document.getElementById('question-number-title').innerText = `Soal ${currentIdx + 1} dari ${quizDatabase.length}`;
+            document.getElementById('question-text').innerHTML = q.q;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const isAnswered = userAnswers.hasOwnProperty(currentIdx);
+            const selectedOpt = userAnswers[currentIdx];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border transition-all flex items-center justify-between text-slate-800 font-semibold text-sm md:text-base ";
+                
+                let borderStyle = "border-slate-200 bg-slate-50 hover:bg-emerald-50/50 hover:border-emerald-300";
+                let iconHTML = '';
+
+                if (isAnswered) {
+                    btn.disabled = true; // Kunci setelah dijawab
+                    if (optIdx === q.correct) {
+                        borderStyle = "border-emerald-500 bg-emerald-100/80 text-emerald-950 font-bold shadow-sm";
+                        iconHTML = '<i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i>';
+                    } else if (optIdx === selectedOpt) {
+                        borderStyle = "border-rose-500 bg-rose-100/80 text-rose-950 font-bold shadow-sm";
+                        iconHTML = '<i class="fa-solid fa-circle-xmark text-rose-600 text-xl"></i>';
+                    } else {
+                        borderStyle = "border-slate-200 bg-slate-50 opacity-50";
+                    }
+                }
+
+                btn.className += " " + borderStyle;
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-white border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">
+                            ${String.fromCharCode(65 + optIdx)}
+                        </span>
+                        <span>${optText}</span>
+                    </div>
+                    ${iconHTML}
+                `;
+
+                if (!isAnswered) {
+                    btn.onclick = () => selectAnswer(optIdx);
+                }
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Feedback / Explanation Box
+            const feedbackBox = document.getElementById('feedback-box');
+            if (isAnswered) {
+                feedbackBox.classList.remove('hidden');
+                const isCorrect = selectedOpt === q.correct;
+                if (isCorrect) {
+                    feedbackBox.className = "p-4 rounded-2xl border bg-emerald-50 border-emerald-300 text-emerald-900 text-sm space-y-1";
+                    feedbackBox.innerHTML = `
+                        <div class="font-bold flex items-center gap-2 text-emerald-700">
+                            <i class="fa-solid fa-circle-check text-lg"></i> Jawaban Kamu Benar! 🎉
+                        </div>
+                        <p class="text-xs text-emerald-800 pt-1 leading-relaxed"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    `;
+                } else {
+                    feedbackBox.className = "p-4 rounded-2xl border bg-rose-50 border-rose-300 text-rose-900 text-sm space-y-1";
+                    feedbackBox.innerHTML = `
+                        <div class="font-bold flex items-center gap-2 text-rose-700">
+                            <i class="fa-solid fa-circle-xmark text-lg"></i> Jawaban Kurang Tepat!
+                        </div>
+                        <p class="text-xs text-rose-800 pt-1 leading-relaxed"><strong>Pembahasan:</strong> ${q.explanation}</p>
+                    `;
+                }
+            } else {
+                feedbackBox.classList.add('hidden');
+            }
+
+            // Button Nav Update
+            document.getElementById('btn-prev').disabled = currentIdx === 0;
+            const nextBtn = document.getElementById('btn-next');
+            if (currentIdx === quizDatabase.length - 1) {
+                nextBtn.innerHTML = `Selesai <i class="fa-solid fa-flag-checkered ml-2"></i>`;
+            } else {
+                nextBtn.innerHTML = `Selanjutnya <i class="fa-solid fa-arrow-right ml-2"></i>`;
+            }
+
+            renderSidebarGrid();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentIdx] = optionIndex;
+            saveAnswers();
+            renderQuestion();
+        }
+
+        function jumpToQuestion(idx) {
+            currentIdx = idx;
+            renderQuestion();
+        }
+
+        function navigateQuestion(step) {
+            if (currentIdx + step >= 0 && currentIdx + step < quizDatabase.length) {
+                currentIdx += step;
+                renderQuestion();
+            } else if (currentIdx + step >= quizDatabase.length) {
+                showCompletionModal();
+            }
+        }
+
+        function showCompletionModal() {
+            document.getElementById('modal-score').innerText = calculateScore();
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('completion-modal').classList.add('hidden');
+        }
+
+        function calculateScore() {
+            let correctCount = 0;
+            Object.keys(userAnswers).forEach(qIdx => {
+                if (userAnswers[qIdx] === quizDatabase[qIdx].correct) {
+                    correctCount++;
+                }
+            });
+            return Math.round((correctCount / quizDatabase.length) * 100);
+        }
+
+        function updateStats() {
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('stat-answered').innerText = `${answeredCount} / ${quizDatabase.length}`;
+            document.getElementById('stat-score').innerText = calculateScore();
+        }
+
+        function initQuiz() {
+            loadSavedAnswers();
+            updateStats();
+            renderQuestion();
+        }
+
+        // Run on load
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
